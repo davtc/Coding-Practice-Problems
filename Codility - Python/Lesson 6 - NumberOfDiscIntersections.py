@@ -38,24 +38,27 @@ Copyright 2009–2022 by Codility Limited. All Rights Reserved. Unauthorized cop
 
 def solution(A):
     # write your code in Python 3.8.10
-    disc_min = []
-    disc_max = []
+    disc_start = []
+    disc_end = []
     intersections = 0
     
     for centre, radius in enumerate(A):
-        disc_min.append(centre - radius)
-        disc_max.append(centre + radius)
+        disc_start.append((centre - radius, "start"))
+        disc_end.append((centre + radius, "end"))
 
-    disc_min = sorted(disc_min)
-    disc_max = sorted(disc_max)
+    discs = disc_start + disc_end
+    discs = sorted(discs, key=lambda l : l[0])
+    
+    disc_open = 0
 
-    j = 0
-    for i in range(len(disc_max)):
-        while j < len(disc_min) and disc_max[i] >= disc_min[j]:
-            j += 1
-        intersections += ((j - i) - 1) # Add the number of intersections of current disc and remove the intersections that have already been counted and the intersection with the same disc
-        if intersections > 10000000:
+    for d in discs:
+        if d[1] == "start":
+            intersections += disc_open
+            if intersections > 10000000:
                 return -1
+            disc_open += 1
+        else:
+            disc_open -= 1
 
     return intersections
      
